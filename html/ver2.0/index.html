@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>音声置換ツール</title>
+    <style>
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; text-align: center; padding: 50px; background: #f0f3f5; }
+        #status { color: #666; margin-bottom: 20px; }
+        #result { font-size: 2rem; font-weight: bold; color: #1da1f2; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); min-height: 1.5em; }
+        .highlight { color: #000; text-decoration: line-through; font-size: 1.5rem; margin-right: 10px; }
+        button { padding: 15px 30px; font-size: 1rem; cursor: pointer; border: none; border-radius: 50px; background: #000; color: #fff; transition: 0.3s; }
+        button:hover { opacity: 0.8; }
+    </style>
+</head>
+<body>
+
+    <h1>Voice Word Corrector</h1>
+    <p id="status">ボタンを押して「Twitter」と喋ってみてください</p>
+    
+    <button id="startBtn">音声認識をスタート</button>
+
+    <div style="margin-top: 50px;">
+        <p>認識結果:</p>
+        <div id="result">...ここに表示されます...</div>
+    </div>
+
+    <script>
+        // 音声認識の準備
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        
+        recognition.lang = 'ja-JP';      // 言語を日本語に設定
+        recognition.interimResults = false; // 確定した結果のみ取得
+
+        const startBtn = document.getElementById('startBtn');
+        const resultDiv = document.getElementById('result');
+        const statusP = document.getElementById('status');
+
+        startBtn.onclick = () => {
+            recognition.start();
+            statusP.innerText = "聴いています...";
+            startBtn.style.background = "#ff4b2b";
+        };
+
+        // 声を認識した時の処理
+        recognition.onresult = (event) => {
+            let speechText = event.results[0][0].transcript;
+            
+            // 「Twitter」を「X」に置換
+            // 正規表現で、カタカナ・英語両方に対応
+            let correctedText = speechText.replace(/Twitter|ツイッター/gi, 'X');
+
+            // 画面に表示
+            resultDiv.innerText = correctedText;
+            
+            // もし書き換えが発生してたら、ちょっと強調する演出
+            if (speechText !== correctedText) {
+                console.log("訂正しました！");
+            }
+        };
+
+        recognition.onend = () => {
+            statusP.innerText = "ボタンを押して再開";
+            startBtn.style.background = "#000";
+        };
+    </script>
+</body>
+</html>
