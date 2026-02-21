@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2gger</title>
+    <style>
+        /* 基本デザイン */
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f8f9fa;
+        }
+
+        #startBtn {
+            padding: 20px 40px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,123,255,0.3);
+        }
+
+        /* 警告画面（最初は隠しておく） */
+        #alertOverlay {
+            display: none; /* 通常は非表示 */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgb(A9, 90, 63); /* 茶色の背景 */
+            color: white;
+            z-index: 1000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .alert-title { font-size: 5rem; font-weight: bold; margin: 0; }
+        .alert-msg { font-size: 2rem; margin-top: 20px; }
+        .close-btn {
+            margin-top: 30px;
+            padding: 10px 20px;
+            background: white;
+            color: red;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>音声モニタリング中...</h1>
+    <p>「2gger」と言うと指摘されます。</p>
+    <button id="startBtn">音声認識を開始</button>
+
+    <div id="alertOverlay">
+        <div class="alert-title">DETECTED!</div>
+        <div id="targetWordDisplay" class="alert-msg"></div>
+        <div class="alert-msg">2gger</div>
+        <button class="close-btn" onclick="closeAlert()">戻る</button>
+    </div>
+
+    <script>
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'ja-JP';
+        recognition.interimResults = false;
+        recognition.continuous = true; // 連続して認識を続ける
+
+        // 監視したいワードのリスト
+        const ngWords = ["nigger","Nigger"];
+
+        const startBtn = document.getElementById('startBtn');
+        const overlay = document.getElementById('alertOverlay');
+        const display = document.getElementById('targetWordDisplay');
+
+        startBtn.onclick = () => {
+            recognition.start();
+            startBtn.innerText = "聴取中...";
+            startBtn.style.background = "#28a745";
+        };
+
+        recognition.onresult = (event) => {
+            const lastIndex = event.results.length - 1;
+            const transcript = event.results[lastIndex][0].transcript;
+            console.log("認識結果:", transcript);
+
+            // NGワードが含まれているかチェック
+            for (let word of ngWords) {
+                if (transcript.includes(word)) {
+                    showAlert(word);
+                    break;
+                }
+            }
+        };
+
+        function showAlert(word) {
+            display.innerText = `「${word}」を検知しました`;
+            overlay.style.display = 'flex';
+            
+            // 指摘したことを音でも知らせる（オプション）
+            const uttr = new SpeechSynthesisUtterance("Nigger!");
+            window.speechSynthesis.speak(uttr);
+        }
+
+        function closeAlert() {
+            overlay.style.display = 'none';
+        }
+
+        // エラー時などの自動再開設定
+        recognition.onend = () => {
+            recognition.start(); 
+        };
+    </script>
+</body>
+</html>
