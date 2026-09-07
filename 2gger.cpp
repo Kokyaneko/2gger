@@ -5,8 +5,8 @@
 using namespace std;
 
 vector<string> nigger_set = {"苦","丹"};
-vector<string> nigger_1stchar = {"に","ニ","ﾆ","二","仁","児","爾","似","煮","丹","荷","尼","ni"};
-vector<string> nigger_2ndchar = {"我","画","賀","雅","牙","瓦","駕","蛾","餓","が","ガ","ｶﾞ"};
+vector<string> nigger_1stchar = {"2","に","ニ","ﾆ","二","仁","児","爾","似","煮","丹","荷","尼","ni"};
+vector<string> nigger_2ndchar = {"我","画","賀","雅","牙","瓦","駕","蛾","餓","が","ガ","ｶﾞ","ga","gger"};
 
 int main(){
     string s;
@@ -15,8 +15,8 @@ int main(){
     for(int i=0;i<nigger_set.size();i++){
         auto res = s.find(nigger_set[i]);
         if(res != string::npos){
-            cout<<"nigger detected!!!: "<<nigger_set[i]<<endl;
-            return 0;
+            cout<<"nigger detected!: "<<nigger_set[i]<<endl;
+            break;
         }
     }
 
@@ -26,7 +26,7 @@ int main(){
             for(int j=0;j<nigger_2ndchar.size();j++){
                 auto ress = s.find(nigger_1stchar[i]);
                 if(ress != string::npos){
-                    cout<<"nigger detected!!!: "<<nigger_1stchar[i]<<nigger_2ndchar[j]<<endl;
+                    cout<<"nigger detected!!: "<<nigger_1stchar[i]<<nigger_2ndchar[j]<<endl;
                     break;
                 }               
             }
